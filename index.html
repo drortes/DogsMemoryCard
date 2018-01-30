@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dror Memory Game</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        var counter = 0;
+        var images = [];
+        var openImages = [];
+        var numOfCards = 0;
+        var numOfOpenCards = 0;
+        $(document).ready(function() {
+            $("#rungame").click(function() {
+                var rows = $("#rows").val();
+                console.log(rows);
+                var cols = $("#cols").val();
+                console.log(cols);
+                numOfCards = rows * cols;
+                $(".container").empty();
+                var numOfImages = (rows * cols) / 2;
+                for (var i = 1; i <= numOfImages; i++) {
+                    var path = "img/dog" + i + ".jpg";
+                    images.push(path);
+                    images.push(path);
+
+                }
+
+                randomize();
+
+                createTable(rows, cols);
+
+            });
+
+        });
+
+        function randomize() {
+            var i = images.length;
+            var j = undefined;
+            var temp = undefined;
+            while (--i) {
+                j = Math.floor(Math.random() * (i - 1));
+                temp = images[i];
+                images[i] = images[j];
+                images[j] = temp;
+
+
+            }
+            console.log(images);
+
+        }
+
+        function createTable(numOfRows, numOfCols) {
+            var imagesCounter = 0;
+            var mytable = $('<table></table>').attr({
+                id: "gameTable"
+            });
+            for (var i = 0; i < numOfRows; i++) {
+                var row = $('<tr></tr>').attr({
+                    class: "gameTableRow"
+                }).appendTo(mytable);
+                for (var j = 0; j < numOfCols; j++) {
+                    var td = $('<td></td>').attr({
+                        id: i + "" + j
+                    }).click({
+                        id: i + "" + j
+                    }, openCard).appendTo(row);
+                    var image = '<img src=' + images[imagesCounter] + ' class="closePic"> ';
+                    td.append(image);
+                    imagesCounter++;
+                }
+
+            }
+            mytable.appendTo(".container");
+        }
+
+        function openCard(event) {
+            if (counter < 2) {
+                counter++;
+                var td = document.getElementById(event.data.id);
+                openImages.push(td);
+                td.firstElementChild.className = "openPic";
+            }
+
+            if (counter == 2 && openImages.length != 0) {
+
+                if (openImages[0].firstElementChild.src == openImages[1].firstElementChild.src) {
+                    counter = 0;
+                    openImages = [];
+                    numOfOpenCards = numOfOpenCards + 2;
+                    if (numOfCards == numOfOpenCards) {
+                        setTimeout(function() {
+                            alert("Game Over ! You Won!!");
+                            location.reload();
+                        }, 700);
+
+                    }
+                } else {
+                    setTimeout(function() {
+                        if (openImages.length != 0) {
+                            openImages[0].firstElementChild.className = "closePic";
+                            openImages[1].firstElementChild.className = "closePic";
+                            openImages = [];
+                            counter = 0;
+
+                        }
+                    }, 300);
+
+
+
+
+                }
+
+            }
+
+
+
+
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">:ברוכים הבאים למשחק הזכרון</div>
+        <br>
+        <div class="maintext">
+            בחר מספר שורות
+            <select id="rows">
+
+                <option value="2">2</option>
+
+                <option value="4">4</option>
+                <option value="6">6</option>
+            </select>
+
+            בחר מספר עמודות
+            <select id="cols">
+
+                <option value="2">2</option>
+
+                <option value="4">4</option>
+                <option value="6">6</option>
+            </select>
+
+
+        </div>
+        <br>
+
+        <button id="rungame">התחל משחק</button>
+        <br>
+
+    </div>
+
+
+</body>
+
+</html>
